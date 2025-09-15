@@ -37,7 +37,7 @@ class Repl : Interpreter() {
             print("> ")
             val str = tokenize(readln())
             //print(str.length)
-            str.print()
+            print(str)
         }
     }
 }

@@ -12,22 +12,21 @@ class Node <Generic> (
 public class LinkedList <Generic> {
 
     private var root: Node<Generic>? = null
+    private var leaf: Node<Generic>? = null
     var length: Int = 0
     
     fun append(element: Generic){
 
         if(root == null){
             root = Node<Generic>(element)
+            leaf = root
             this.length++
+            return
         }
+        var n = Node<Generic>(element)
+        leaf?.next = n
+        leaf = n 
 
-        var e: Node<Generic>? = root
-        while(e?.next != null){
-            //print(e.element)
-            e = e.next
-        }
-       // print("\n")
-        e?.next = Node<Generic>(element)
         this.length++ 
     }
 
@@ -36,13 +35,14 @@ public class LinkedList <Generic> {
         this.length++
     }
 
-    
-    fun print(){
+    override fun toString(): String {
+        var str: String = ""
         var e: Node<Generic>? = root
         for(i in 0..< this.length){
             requireNotNull(e)
-            println(e.element)
+            str += "${e.element} "
             e = e.next
         }
+        return "[$str]"
     }
 }
