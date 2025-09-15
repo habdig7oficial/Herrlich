@@ -18,6 +18,7 @@ public class LinkedList <Generic> {
 
         if(root == null){
             root = Node<Generic>(element)
+            this.length++
         }
 
         var e: Node<Generic>? = root
@@ -27,7 +28,7 @@ public class LinkedList <Generic> {
         }
        // print("\n")
         e?.next = Node<Generic>(element)
-
+        this.length++ 
     }
 
     fun prepend(element: Generic){ 
