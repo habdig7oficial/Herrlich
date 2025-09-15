@@ -1,32 +1,4 @@
-class Node <Generic> (
-    element: Generic,
-    next: Node<Generic>?
-){
-    var element: Generic = element
-    var next: Node<Generic>? = next
-}
-
-
-class LinkedList <Generic> {
-
-    var root: Node<Generic>? = null
-    var length: Int = 0
-    
-    fun append(element: Generic){
-        root = Node<Generic>(element, root)
-        this.length++
-    }
-    
-    fun print(){
-        var e: Node<Generic>? = root
-        for(i in 0..< this.length){
-            requireNotNull(e)
-            println(e.element)
-            e = e.next
-        }
-    }
-}
-
+import lib.LinkedList.*
 
 open class Interpreter{
     val reserved: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
@@ -34,12 +6,10 @@ open class Interpreter{
 
     fun tokenize(textStream : String) : LinkedList<String> {
 
-        val tokens: LinkedList<String> = LinkedList()
-
+        val tokens: LinkedList<String> = LinkedList()   
+        tokens.append("")
 
         var i : Int = 0
-        var ptr : Int = 0
-
         while(i < textStream.length){
             if(textStream[i] in reservedSymbols){
                 tokens.append(textStream[i].toString())
