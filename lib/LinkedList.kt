@@ -30,9 +30,15 @@ public class LinkedList <Generic> {
         this.length++ 
     }
 
-    fun prepend(element: Generic){ 
+    fun prepend(element: Generic){  
         root = Node<Generic>(element, root)
+        if(this.length == 0)
+            this.leaf = root
         this.length++
+    }
+
+    fun getLeaf(): Node<Generic>? {
+        return this.leaf
     }
 
     override fun toString(): String {
