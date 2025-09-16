@@ -1,7 +1,7 @@
 import lib.LinkedList.*
 
 open class Interpreter{
-    val reserved: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
+    val reservedTokens: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
     val reservedSymbols: Array<Char> = arrayOf('+', '-', '*', '/', 'ˆ', '%', '(', ')', '=')
 
     fun tokenize(textStream : String) : LinkedList<String> {
