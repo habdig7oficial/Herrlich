@@ -37,11 +37,11 @@ public class LinkedList <Generic> {
         this.length++
     }
 
-    fun getLeaf(): Node<Generic>? {
+    fun getLast(): Node<Generic>? {
         return this.leaf
     }
 
-    fun getRoot(): Node<Generic>? {
+    fun getFirst(): Node<Generic>? {
         return this.root
     }
 

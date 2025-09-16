@@ -8,36 +8,31 @@ open class Interpreter{
     fun tokenize(textStream : String) : LinkedList<String> {
 
         val tokens: LinkedList<String> = LinkedList()   
-        tokens.append("")
 
         var i : Int = 0
-        var op: Boolean = false
+        var shouldEnd: Boolean = true
 
         while(i < textStream.length){
             if(textStream[i] in reservedSymbols){
-                op = true
-                if(tokens.getLeaf()?.element == ""){
-                    tokens.getLeaf()?.element += textStream[i].toString()
-                }
-                else{
+                if(shouldEnd)
                     tokens.append(textStream[i].toString())
-                }
+                else
+                    tokens.getLast()?.element += textStream[i].toString()
+
+                shouldEnd = true
             }
             else if(textStream[i].isLetterOrDigit() || textStream[i] == '.'){
                 //tokens[tokens.size - 2] = tokens[ptr] + textStream[i]
                 //print("${textStream[i]}")
-                if(op == false){
-                    tokens.getLeaf()?.element += textStream[i].toString()
-                }
-                else{
+                if(shouldEnd){
                     tokens.append(textStream[i].toString())
-                    op = false
-                }
+                    shouldEnd = false
+                }   
+                else
+                    tokens.getLast()?.element += textStream[i].toString()
             }
-            else if(textStream[i].isWhitespace() && !textStream[i - 1].isWhitespace()){
-                if(tokens.getLeaf()?.element !== ""){
-                    tokens.append("")
-                }
+            else if(textStream[i].isWhitespace()){
+                shouldEnd = true
             }
             i++
         }
@@ -48,11 +43,11 @@ open class Interpreter{
     fun parser(expr: LinkedList<String>){
         var stack: Stack<String> = Stack<String>()
         var polishNotation: LinkedList<String> = LinkedList<String>()
-        var stmt: Node<String>? = expr.getRoot()
+        var stmt: Node<String>? = expr.getLast()
         //requireNotNull(stmt)
         while(stmt != null){
             polishNotation.append(stmt.element)
-            print(stmt.element!!.get(0) !in reservedSymbols)
+           // print(stmt.element!!.get(0) !in reservedSymbols)
            if(true){
                 print("\n")
            }
