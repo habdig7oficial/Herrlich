@@ -41,12 +41,16 @@ public class LinkedList <Generic> {
         return this.leaf
     }
 
+    fun getRoot(): Node<Generic>? {
+        return this.root
+    }
+
     override fun toString(): String {
         var str: String = ""
         var e: Node<Generic>? = root
         for(i in 0..< this.length){
             requireNotNull(e)
-            str += "${e.element} "
+            str += "\"${e.element}\" "
             e = e.next
         }
         return "[$str]"

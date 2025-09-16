@@ -1,4 +1,5 @@
 import lib.LinkedList.*
+import java.util.Stack /* LEMBRAR DE REMOVER ISSO */
 
 open class Interpreter{
     val reservedTokens: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
@@ -14,8 +15,13 @@ open class Interpreter{
 
         while(i < textStream.length){
             if(textStream[i] in reservedSymbols){
-                tokens.append(textStream[i].toString())
                 op = true
+                if(tokens.getLeaf()?.element == ""){
+                    tokens.getLeaf()?.element += textStream[i].toString()
+                }
+                else{
+                    tokens.append(textStream[i].toString())
+                }
             }
             else if(textStream[i].isLetterOrDigit() || textStream[i] == '.'){
                 //tokens[tokens.size - 2] = tokens[ptr] + textStream[i]
@@ -29,7 +35,9 @@ open class Interpreter{
                 }
             }
             else if(textStream[i].isWhitespace() && !textStream[i - 1].isWhitespace()){
-                tokens.append("")
+                if(tokens.getLeaf()?.element !== ""){
+                    tokens.append("")
+                }
             }
             i++
         }
@@ -37,7 +45,20 @@ open class Interpreter{
         return tokens
     }
 
-    fun parse(){
+    fun parser(expr: LinkedList<String>){
+        var stack: Stack<String> = Stack<String>()
+        var polishNotation: LinkedList<String> = LinkedList<String>()
+        var stmt: Node<String>? = expr.getRoot()
+        //requireNotNull(stmt)
+        while(stmt != null){
+            polishNotation.append(stmt.element)
+            print(stmt.element!!.get(0) !in reservedSymbols)
+           if(true){
+                print("\n")
+           }
+           stmt = stmt.next
+        }
+        print(polishNotation)
 
     }
 }
@@ -46,9 +67,11 @@ class Repl : Interpreter() {
     fun run() : Unit {
         while(true) {
             print("> ")
-            val str = tokenize(readln())
+            val str = this.tokenize(readln())
             //print(str.length)
             print(str)
+
+            this.parser(str)
         }
     }
 }
