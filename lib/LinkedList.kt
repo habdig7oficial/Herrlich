@@ -1,5 +1,7 @@
 package lib.DataStructs
 
+import java.lang.NullPointerException
+
 class Node <Generic> (
     element: Generic,
     next: Node<Generic>? = null
@@ -16,7 +18,6 @@ public class LinkedList <Generic> {
     var length: Int = 0
     
     fun append(element: Generic){
-
         if(root == null){
             root = Node<Generic>(element)
             leaf = root
@@ -35,6 +36,26 @@ public class LinkedList <Generic> {
         if(this.length == 0)
             this.leaf = root
         this.length++
+    }
+
+    fun rmFromStart(index: Int){
+        if(this.root == null)
+            throw NullPointerException("The Linked List is Null")
+        var e: Node<Generic>? = this.root
+        var i = 0
+        while(i <= index && e?.next != null){
+            e = e.next
+            i++
+        }
+        if(i != index)
+            throw NullPointerException("This element does not Exists")
+        else
+        this.root = this.root?.next
+       if(root != null){
+            this.root = this.root?.next
+            this.length--
+       } 
+
     }
 
     fun getLast(): Node<Generic>? {

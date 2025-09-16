@@ -1,6 +1,7 @@
 package lib.DataStructs
 
 
-class Stack <Generic> {
-
-}
+/*
+class Stack <Generic>(size: Int){
+    push
+} */

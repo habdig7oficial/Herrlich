@@ -41,7 +41,7 @@ open class Interpreter{
     }
 
     fun parser(expr: LinkedList<String>){
-        var stack: Stack<String> = Stack<String>()
+        //var stack: Stack<String> = Stack<String>()
         var polishNotation: LinkedList<String> = LinkedList<String>()
         var stmt: Node<String>? = expr.getFirst()
         //requireNotNull(stmt)
