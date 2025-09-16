@@ -1,5 +1,6 @@
 compile: 
-	kotlinc lib/LinkedList.kt lib/Stack.kt Main.kt  
+	javac lib/Stack.java
+	kotlinc lib/LinkedList.kt lib/Stack.java Main.kt  
 	
 run:
 	kotlin MainKt

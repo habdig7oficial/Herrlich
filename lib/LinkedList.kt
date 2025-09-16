@@ -1,6 +1,7 @@
 package lib.DataStructs
 
 import java.lang.NullPointerException
+import kotlin.emptyArray
 
 class Node <Generic> (
     element: Generic,
@@ -37,27 +38,6 @@ public class LinkedList <Generic> {
             this.leaf = root
         this.length++
     }
-
-    fun rmFromStart(index: Int){
-        if(this.root == null)
-            throw NullPointerException("The Linked List is Null")
-        var e: Node<Generic>? = this.root
-        var i = 0
-        while(i <= index && e?.next != null){
-            e = e.next
-            i++
-        }
-        if(i != index)
-            throw NullPointerException("This element does not Exists")
-        else
-        this.root = this.root?.next
-       if(root != null){
-            this.root = this.root?.next
-            this.length--
-       } 
-
-    }
-
     fun getLast(): Node<Generic>? {
         return this.leaf
     }

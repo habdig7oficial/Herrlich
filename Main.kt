@@ -1,9 +1,18 @@
 import lib.DataStructs.*
 
+class Symbol(
+    val op: Char,
+    val priority: Int 
+)
 
 open class Interpreter{
     val reservedTokens: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
-    val reservedSymbols: Array<Char> = arrayOf('+', '-', '*', '/', 'ˆ', '%', '(', ')', '=')
+    val reservedSymbols: Array<Symbol> = arrayOf(Symbol('+', 1), Symbol('-', 1), Symbol('*', 2), Symbol('/', 2), Symbol('^', 3), Symbol('%', 2), Symbol('(', 4), Symbol(')', 4), Symbol('=', 1))
+
+    operator fun Array<Symbol>.contains(value: Char) : Boolean {
+        return this.any { it.op == value }
+    }
+
 
     fun tokenize(textStream : String) : LinkedList<String> {
 
@@ -41,18 +50,28 @@ open class Interpreter{
     }
 
     fun parser(expr: LinkedList<String>){
-        //var stack: Stack<String> = Stack<String>()
+        var stack: Stack<Symbol> = Stack<Symbol>()
         var polishNotation: LinkedList<String> = LinkedList<String>()
         var stmt: Node<String>? = expr.getFirst()
+        var i: Int;
         //requireNotNull(stmt)
         while(stmt != null){
-           if(stmt.element[0] !in reservedSymbols){
+            i = stmt.let { reservedSymbols.indexOfFirst{ symbol -> 
+                symbol.op == it.element[0] 
+            } 
+        }
+           if( i != -1 ){
                 print("${stmt.element},")
                 polishNotation.append(stmt.element)
            }
+           else{
+                stack.push(reservedSymbols[i])
+           }
+        
            stmt = stmt.next
         }
         print(polishNotation)
+        print(stack)
 
     }
 }
