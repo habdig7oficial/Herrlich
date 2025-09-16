@@ -1,5 +1,5 @@
-import lib.LinkedList.*
-import java.util.Stack /* LEMBRAR DE REMOVER ISSO */
+import lib.DataStructs.*
+
 
 open class Interpreter{
     val reservedTokens: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")

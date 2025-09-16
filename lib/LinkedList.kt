@@ -1,4 +1,4 @@
-package lib.LinkedList
+package lib.DataStructs
 
 class Node <Generic> (
     element: Generic,
@@ -55,4 +55,5 @@ public class LinkedList <Generic> {
         }
         return "[$str]"
     }
+
 }
