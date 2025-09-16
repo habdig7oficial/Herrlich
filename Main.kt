@@ -43,13 +43,12 @@ open class Interpreter{
     fun parser(expr: LinkedList<String>){
         var stack: Stack<String> = Stack<String>()
         var polishNotation: LinkedList<String> = LinkedList<String>()
-        var stmt: Node<String>? = expr.getLast()
+        var stmt: Node<String>? = expr.getFirst()
         //requireNotNull(stmt)
         while(stmt != null){
-            polishNotation.append(stmt.element)
-           // print(stmt.element!!.get(0) !in reservedSymbols)
-           if(true){
-                print("\n")
+           if(stmt.element[0] !in reservedSymbols){
+                print("${stmt.element},")
+                polishNotation.append(stmt.element)
            }
            stmt = stmt.next
         }
