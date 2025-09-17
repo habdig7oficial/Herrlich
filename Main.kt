@@ -56,10 +56,14 @@ open class Interpreter{
         var i: Int;
         //requireNotNull(stmt)
         while(stmt != null){
-            i = stmt.let { reservedSymbols.indexOfFirst{ symbol -> 
-                symbol.op == it.element[0] 
-            } 
-        }
+
+            i = stmt.element.let {
+                reservedSymbols.indexOfFirst { symbl: Symbol -> 
+                    println(it[0])
+                    it[0] == symbl.op  
+                }
+            }
+
            if( i != -1 ){
                 print("${stmt.element},")
                 polishNotation.append(stmt.element)
