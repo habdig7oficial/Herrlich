@@ -57,29 +57,42 @@ open class Interpreter{
         var stack: Stack<Symbol> = Stack<Symbol>()
         var polishNotation: LinkedList<String> = LinkedList<String>()
         var stmt: Node<String>? = expr.getFirst()
-        var index: Int = -1 
+        var i: Int 
         //requireNotNull(stmt)
         while(stmt != null){
-
-            for(i in 0..< reservedSymbols.size){
-                if(stmt.element[0] == reservedSymbols[i].op){
-                    index = i
-                    break 
+            i = stmt.element.let { 
+                reservedSymbols.indexOfFirst { symbl: Symbol ->
+                    it[0] == symbl.op  
+                 } 
+             }
+           if( i != -1 ){
+                /*
+                if(reservedSymbols[i].op == '('){
+                    polishNotation.append(stack.pop().op.toString()) 
+                    continue
                 }
-            }
+                    */
 
-           if( index != -1 )
-                stack.push(reservedSymbols[index]) 
+                while(!stack.isEmpty() && stack.top().priority >= reservedSymbols[i].priority){
+                    polishNotation.append(stack.pop().op.toString())    
+                }
+                stack.push(reservedSymbols[i])  
+           }
            else{
-                
-                print("${stmt.element},")
+               print("${stmt.element},") 
                 polishNotation.append(stmt.element)
            }
-        
+            
            stmt = stmt.next
         }
-        print(polishNotation)
-        print(stack)
+
+        while(!stack.isEmpty())
+            polishNotation.append(stack.pop().op.toString())  
+        
+
+        print("Polish Notation: ${polishNotation}")
+
+
 
     }
 }

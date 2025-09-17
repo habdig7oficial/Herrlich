@@ -1,14 +1,15 @@
 package lib.DataStructs;
+import java.util.Iterator;
 
 public class Stack <T> {
     // atributos
     private final static int TAM_DEFAULT = 100;
     private int topoStack;
-    private T elementos[];
+    private T elements[];
 
     // construtores
     public Stack(int tamanho) {
-        elementos = (T[]) new Object[tamanho];
+        elements = (T[]) new Object[tamanho];
         topoStack = -1;
     }
 
@@ -19,7 +20,7 @@ public class Stack <T> {
     // métodos
     public void push(T e) throws Exception {
         if (!isFull()) {
-            elementos[++topoStack] = e;
+            elements[++topoStack] = e;
         }
         else {
             throw new Exception("Overflow - Estouro de Stack");
@@ -28,16 +29,16 @@ public class Stack <T> {
 
     public T pop() throws Exception {
         if (!isEmpty()) {
-            return elementos[topoStack--];
+            return elements[topoStack--];
         }
         else {
             throw new Exception("Underflow - Esvaziamento de Stack");
         }
     }
 
-    public T topo() throws Exception {
+    public T top() throws Exception {
         if (!isEmpty()) {
-            return elementos[topoStack];
+            return elements[topoStack];
         }
         else {
             throw new Exception("Underflow - Esvaziamento de Stack");
@@ -53,21 +54,16 @@ public class Stack <T> {
     }
 
     public boolean isFull() {
-        return topoStack == elementos.length - 1;
+        return topoStack == elements.length - 1;
     }
 
     @Override
     public String toString(){
         String builder = "";
         for(int i = 0; i < topoStack; i++){
-            builder += elementos[i];
+            builder += elements[i];
         }
         return builder;
     }
 
 }
-
-/*
-class Stack <Generic>(size: Int){
-    push
-} */
