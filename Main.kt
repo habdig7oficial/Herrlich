@@ -3,7 +3,11 @@ import lib.DataStructs.*
 class Symbol(
     val op: Char,
     val priority: Int 
-)
+){
+    override fun toString(): String {
+        return "($op, $priority)"
+    }
+}
 
 open class Interpreter{
     val reservedTokens: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
@@ -53,23 +57,23 @@ open class Interpreter{
         var stack: Stack<Symbol> = Stack<Symbol>()
         var polishNotation: LinkedList<String> = LinkedList<String>()
         var stmt: Node<String>? = expr.getFirst()
-        var i: Int;
+        var index: Int = -1 
         //requireNotNull(stmt)
         while(stmt != null){
 
-            i = stmt.element.let {
-                reservedSymbols.indexOfFirst { symbl: Symbol -> 
-                    println(it[0])
-                    it[0] == symbl.op  
+            for(i in 0..< reservedSymbols.size){
+                if(stmt.element[0] == reservedSymbols[i].op){
+                    index = i
+                    break 
                 }
             }
 
-           if( i != -1 ){
+           if( index != -1 )
+                stack.push(reservedSymbols[index]) 
+           else{
+                
                 print("${stmt.element},")
                 polishNotation.append(stmt.element)
-           }
-           else{
-                stack.push(reservedSymbols[i])
            }
         
            stmt = stmt.next
