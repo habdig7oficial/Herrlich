@@ -1,4 +1,5 @@
 import lib.DataStructs.*
+import Symbol
 
 class Symbol(
     val op: Char,
@@ -66,15 +67,32 @@ open class Interpreter{
                  } 
              }
            if( i != -1 ){
-                /*
+                
                 if(reservedSymbols[i].op == '('){
-                    polishNotation.append(stack.pop().op.toString()) 
+                    stack.push(reservedSymbols[i]) 
+                    stmt = stmt.next 
                     continue
                 }
-                    */
+        
+                var top: Symbol = try{ 
+                    stack.top()
+                }
+                catch(err: Throwable){
+                    Symbol('\u0000', 0)
+                }
 
-                while(!stack.isEmpty() && stack.top().priority >= reservedSymbols[i].priority){
-                    polishNotation.append(stack.pop().op.toString())    
+                while(!stack.isEmpty() && top.priority >= reservedSymbols[i].priority){ 
+                    println(stack)
+                    if(top != Symbol('(', 5)) 
+                        polishNotation.append(stack.pop().op.toString())
+                    else 
+                        stack.pop()     
+                    top  = try{ 
+                        stack.top()
+                    }
+                    catch(err: Throwable){
+                        Symbol('\u0000', 0)
+                    }
                 }
                 stack.push(reservedSymbols[i])  
            }
@@ -85,7 +103,7 @@ open class Interpreter{
             
            stmt = stmt.next
         }
-
+        
         while(!stack.isEmpty())
             polishNotation.append(stack.pop().op.toString())  
         
