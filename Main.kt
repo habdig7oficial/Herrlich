@@ -1,4 +1,5 @@
 import lib.DataStructs.*
+import java.io.File
 import Symbol
 
 class Symbol(
@@ -28,10 +29,10 @@ open class Interpreter{
 
         while(i < textStream.length){
             if(textStream[i] in reservedSymbols){
-                if(shouldEnd)
+               // if(shouldEnd)
                     tokens.append(textStream[i].toString())
-                else
-                    tokens.getLast()?.element += textStream[i].toString()
+                //else
+                //    tokens.getLast()?.element += textStream[i].toString()
 
                 shouldEnd = true
             }
@@ -54,7 +55,7 @@ open class Interpreter{
         return tokens
     }
 
-    fun parser(expr: LinkedList<String>){
+    fun parser(expr: LinkedList<String>) : LinkedList<String> {
         var stack: Stack<Symbol> = Stack<Symbol>()
         var polishNotation: LinkedList<String> = LinkedList<String>()
         var stmt: Node<String>? = expr.getFirst()
@@ -110,20 +111,30 @@ open class Interpreter{
 
         print("Polish Notation: ${polishNotation}")
 
-
+        return polishNotation 
 
     }
 }
 
 class Repl : Interpreter() {
+
+    val LOG_PATH = "./log"
+    val log = File(LOG_PATH)
+
     fun run() : Unit {
         while(true) {
             print("> ")
             val str = this.tokenize(readln())
             //print(str.length)
-            print(str)
 
-            this.parser(str)
+            log.appendText(str.toString())   
+
+            val polish = this.parser(str)
+            log.appendText("\n\n${polish.toString()}") 
+
+
+            log.appendText("\n-------------------\n")
+            
         }
     }
 }
