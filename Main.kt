@@ -13,7 +13,7 @@ class Symbol(
 
 open class Interpreter{
     val reservedTokens: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
-    val reservedSymbols: Array<Symbol> = arrayOf(Symbol('+', 1), Symbol('-', 1), Symbol('*', 2), Symbol('/', 2), Symbol('^', 3), Symbol('%', 2), Symbol('(', 4), Symbol(')', 4), Symbol('=', 1))
+    val reservedSymbols: Array<Symbol> = arrayOf(Symbol('+', 1), Symbol('-', 1), Symbol('*', 2), Symbol('/', 2), Symbol('^', 3), Symbol('%', 2), Symbol('(', 0), Symbol(')', 4), Symbol('=', 1))
 
     operator fun Array<Symbol>.contains(value: Char) : Boolean {
         return this.any { it.op == value }
@@ -29,11 +29,7 @@ open class Interpreter{
 
         while(i < textStream.length){
             if(textStream[i] in reservedSymbols){
-               // if(shouldEnd)
-                    tokens.append(textStream[i].toString())
-                //else
-                //    tokens.getLast()?.element += textStream[i].toString()
-
+                tokens.append(textStream[i].toString())
                 shouldEnd = true
             }
             else if(textStream[i].isLetterOrDigit() || textStream[i] == '.'){
@@ -68,11 +64,34 @@ open class Interpreter{
                  } 
              }
            if( i != -1 ){
-                
+               // println(stack) 
+
                 if(reservedSymbols[i].op == '('){
                     stack.push(reservedSymbols[i]) 
                     stmt = stmt.next 
                     continue
+                }
+                else if(reservedSymbols[i].op == ')'){
+                    println("\nsymbl ${stack}") 
+                    if(stack.isEmpty())
+                        throw Exception("Paretisis closed but not opend")  
+
+                    var symbl = stack.top().op
+                    while( symbl  != '('){ 
+                        println("\nsymbl ${stack.top()}") 
+                        polishNotation.append(stack.pop().op.toString())
+
+                       if(!stack.isEmpty())
+                            symbl = stack.top().op
+                        else 
+                            break
+                    }
+                    if(!stack.isEmpty() && stack.top().op == '(')
+                        stack.pop()
+                    println("\nFINAL ${stack}") 
+                
+                    stmt = stmt.next 
+                    continue  
                 }
         
                 var top: Symbol = try{ 
@@ -83,11 +102,10 @@ open class Interpreter{
                 }
 
                 while(!stack.isEmpty() && top.priority >= reservedSymbols[i].priority){ 
-                    println(stack)
-                    if(top != Symbol('(', 5)) 
-                        polishNotation.append(stack.pop().op.toString())
-                    else 
-                        stack.pop()     
+                    //println(stack)
+   
+                    polishNotation.append(stack.pop().op.toString())
+   
                     top  = try{ 
                         stack.top()
                     }
