@@ -132,6 +132,13 @@ open class Interpreter{
         return polishNotation 
 
     }
+
+    fun interprete(expr: LinkedList<String>){
+        val memory: Hashmap<String, Double> 
+
+        
+    }
+
 }
 
 class Repl : Interpreter() {
@@ -150,8 +157,9 @@ class Repl : Interpreter() {
             val polish = this.parser(str)
             log.appendText("\n\n${polish.toString()}") 
 
-
             log.appendText("\n-------------------\n")
+
+            this.interprete(polish) 
             
         }
     }

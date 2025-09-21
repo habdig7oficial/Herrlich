@@ -1,8 +1,5 @@
 package lib.DataStructs
 
-import java.lang.NullPointerException
-import kotlin.emptyArray
-
 class Node <Generic> (
     element: Generic,
     next: Node<Generic>? = null
