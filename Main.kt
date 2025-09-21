@@ -12,6 +12,7 @@ open class Interpreter{
         return this.any { it.op == value }
     }
 
+    val memory: Hashmap<String, Double> = Hashmap()
 
     fun tokenize(textStream : String) : LinkedList<String> {
 
@@ -127,12 +128,14 @@ open class Interpreter{
     }
 
     fun interprete(expr: LinkedList<String>) : Double {
-        val memory: Hashmap<String, Double> = Hashmap()
+
         var execStack: Stack<Double> = Stack()   
 
         /* A REMOVER */
 
         memory.append("LOREM", 0.76543217)
+
+        var attrTo: String? = null
 
         var stmt = expr.getFirst() 
         var i: Int 
@@ -152,15 +155,12 @@ open class Interpreter{
              
             if(stmt.element == checkOp){
 
-                if(reservedSymbols[i] is Attribute){
-                    var v = try {
-                        execStack.pop()
-                    } catch(err){
-                        print("Not enough elements to operate")
-                        0.0
-                    }
-                    (reservedSymbols[i] as Attribute).operate(stmt.element, execStack.pop() , ptrHash)
-                    stmt = stmt.next 
+                if(reservedSymbols[i] is Attribute && attrTo != null){
+                    //(reservedSymbols[i] as Attribute).operate(attrTo, execStack.pop(), memory)  
+                    //println("\n EXEC ${execStack.top()}") 
+                    memory.append(attrTo, execStack.pop())
+                    println(memory)
+                    stmt = stmt.next
                     continue
                 } 
 
@@ -168,6 +168,7 @@ open class Interpreter{
                     arrayOf(execStack.pop(), execStack.pop()) 
                 }
                 catch(err: Throwable){
+                    print(attrTo)
                     throw Exception("Not enough elements to operate") 
                 }
                 execStack.push(reservedSymbols[i].operate(v1, v2))
@@ -176,11 +177,17 @@ open class Interpreter{
             else if(stmt.element !in reservedTokens){
                 var getValue: Double? = stmt.element.toDoubleOrNull()
                 if(getValue == null){ 
+                    if(expr.getLast()?.element == "="){
+                            attrTo = stmt.element.uppercase()  
+                    }  
+
                     getValue = try{
-                        memory.getValue(stmt.element)
+                        memory.getValue(stmt.element.uppercase())
                     }
                     catch(err: Throwable){
-                        println("\nErro: variável ${stmt.element} não definida")  
+                    
+                        if(attrTo == null)
+                            println("\nErro: variável ${stmt.element} não definida")  
                         0.0
                     }
                 }

@@ -35,12 +35,24 @@ public class LinkedList <Generic> {
             this.leaf = root
         this.length++
     }
+
     fun getLast(): Node<Generic>? {
         return this.leaf
     }
 
     fun getFirst(): Node<Generic>? {
         return this.root
+    }
+
+    fun rmFromStart(index: Int){
+        var stmt = root
+        var i = 0
+        while(stmt != null && i < index){
+
+            i++
+            stmt = stmt.next
+        }
+        stmt?.next = stmt?.next?.next
     }
 
     override fun toString(): String {

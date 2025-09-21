@@ -74,7 +74,7 @@ class NullSymbl(op: Char) : Symbol(op){
 }
 
 class Attribute(op: Char) : Symbol(op){    
-    override val priority: Int = 1
+    override val priority: Int = 0
     override fun operate(v1: Double, v2: Double) : Double {
         return v1 + v2 
     } 
