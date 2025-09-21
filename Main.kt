@@ -127,8 +127,12 @@ open class Interpreter{
     }
 
     fun interprete(expr: LinkedList<String>) : Double {
-        val memory: Hashmap<String, Double>
+        val memory: Hashmap<String, Double> = Hashmap()
         var execStack: Stack<Double> = Stack()   
+
+        /* A REMOVER */
+
+        memory.append("LOREM", 0.76543217)
 
         var stmt = expr.getFirst() 
         var i: Int 
@@ -147,20 +151,38 @@ open class Interpreter{
             } 
              
             if(stmt.element == checkOp){
+
+                if(reservedSymbols[i] is Attribute){
+                    var v = try {
+                        execStack.pop()
+                    } catch(err){
+                        print("Not enough elements to operate")
+                        0.0
+                    }
+                    (reservedSymbols[i] as Attribute).operate(stmt.element, execStack.pop() , ptrHash)
+                    stmt = stmt.next 
+                    continue
+                } 
+
                 var (v2, v1) = try{
                     arrayOf(execStack.pop(), execStack.pop()) 
                 }
                 catch(err: Throwable){
-                    throw Exception("Not enough elements to operate")
+                    throw Exception("Not enough elements to operate") 
                 }
                 execStack.push(reservedSymbols[i].operate(v1, v2))
                 println("\n${execStack.top()}") 
             }
             else if(stmt.element !in reservedTokens){
                 var getValue: Double? = stmt.element.toDoubleOrNull()
-                if(getValue == null){
-                    stmt = stmt.next
-                    continue 
+                if(getValue == null){ 
+                    getValue = try{
+                        memory.getValue(stmt.element)
+                    }
+                    catch(err: Throwable){
+                        println("\nErro: variável ${stmt.element} não definida")  
+                        0.0
+                    }
                 }
                 execStack.push(getValue)
             }
@@ -191,7 +213,9 @@ class Repl : Interpreter() {
 
             val polish = this.parser(str)
             log.appendText("\n\n${polish.toString()}\n") 
-            log.appendText(this.interprete(polish).toString()) 
+            val res = this.interprete(polish)
+            println(res) 
+            log.appendText(res.toString()) 
             log.appendText("\n-------------------\n")
 
             

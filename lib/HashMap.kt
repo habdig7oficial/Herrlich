@@ -29,7 +29,7 @@ class Hashmap <Generic1, Generic2> {
             }
             elem = elem.next
         }
-        return null
+        throw Exception("Variable Not Declared") 
     
     }
 

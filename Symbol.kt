@@ -1,4 +1,5 @@
 import kotlin.math.pow 
+import lib.DataStructs.Hashmap
 
 abstract class Symbol(val op: Char){
     abstract val priority: Int
@@ -76,7 +77,10 @@ class Attribute(op: Char) : Symbol(op){
     override val priority: Int = 1
     override fun operate(v1: Double, v2: Double) : Double {
         return v1 + v2 
-    }
+    } 
+    public fun operate(name: String, value: Double, ptrHash: Hashmap<String, Double>){ 
+        ptrHash.append(name, value)
+    } 
 }
 
 
