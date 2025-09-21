@@ -2,19 +2,12 @@ import lib.DataStructs.*
 import java.io.File
 import Symbol
 
-class Symbol(
-    val op: Char,
-    val priority: Int 
-){
-    override fun toString(): String {
-        return "($op, $priority)"
-    }
-}
+
 
 open class Interpreter{
     val reservedTokens: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
-    val reservedSymbols: Array<Symbol> = arrayOf(Symbol('+', 1), Symbol('-', 1), Symbol('*', 2), Symbol('/', 2), Symbol('^', 3), Symbol('%', 2), Symbol('(', 0), Symbol(')', 4), Symbol('=', 1))
-
+    val reservedSymbols: Array<Symbol> = arrayOf(Add('+'), Sub('-'), Mul('*'), Div('/'), Pow('^'), Mod('%'), BracketOpen('('), BracketClose(')'),  Attribute('='))
+ 
     operator fun Array<Symbol>.contains(value: Char) : Boolean {
         return this.any { it.op == value }
     }
@@ -98,7 +91,7 @@ open class Interpreter{
                     stack.top()
                 }
                 catch(err: Throwable){
-                    Symbol('\u0000', 0)
+                    NullSymbl('\u0000') 
                 }
 
                 while(!stack.isEmpty() && top.priority >= reservedSymbols[i].priority){ 
@@ -110,7 +103,7 @@ open class Interpreter{
                         stack.top()
                     }
                     catch(err: Throwable){
-                        Symbol('\u0000', 0)
+                        NullSymbl('\u0000') 
                     }
                 }
                 stack.push(reservedSymbols[i])  
@@ -133,10 +126,52 @@ open class Interpreter{
 
     }
 
-    fun interprete(expr: LinkedList<String>){
-        val memory: Hashmap<String, Double> 
+    fun interprete(expr: LinkedList<String>) : Double {
+        val memory: Hashmap<String, Double>
+        var execStack: Stack<Double> = Stack()   
 
-        
+        var stmt = expr.getFirst() 
+        var i: Int 
+        while(stmt != null){
+            i = stmt.element.let { 
+                reservedSymbols.indexOfFirst { symbl: Symbol ->
+                    it[0] == symbl.op  
+                 } 
+             }
+
+            val checkOp = try{
+                reservedSymbols[i].op.toString() 
+            }
+            catch(err : Throwable){
+                "\u0000" 
+            } 
+             
+            if(stmt.element == checkOp){
+                var (v2, v1) = try{
+                    arrayOf(execStack.pop(), execStack.pop()) 
+                }
+                catch(err: Throwable){
+                    throw Exception("Not enough elements to operate")
+                }
+                execStack.push(reservedSymbols[i].operate(v1, v2))
+                println("\n${execStack.top()}") 
+            }
+            else if(stmt.element !in reservedTokens){
+                var getValue: Double? = stmt.element.toDoubleOrNull()
+                if(getValue == null){
+                    stmt = stmt.next
+                    continue 
+                }
+                execStack.push(getValue)
+            }
+            stmt = stmt.next
+        }
+        try{
+            return execStack.top() 
+        }
+        catch(err: Throwable){
+            return 0.0  
+        }
     }
 
 }
@@ -155,11 +190,11 @@ class Repl : Interpreter() {
             log.appendText(str.toString())   
 
             val polish = this.parser(str)
-            log.appendText("\n\n${polish.toString()}") 
-
+            log.appendText("\n\n${polish.toString()}\n") 
+            log.appendText(this.interprete(polish).toString()) 
             log.appendText("\n-------------------\n")
 
-            this.interprete(polish) 
+            
             
         }
     }
