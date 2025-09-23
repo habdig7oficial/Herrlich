@@ -33,4 +33,15 @@ class Hashmap <Generic1, Generic2> {
     
     }
 
+    override fun toString() : String{
+        var str = ""    
+
+        for(i in arr){
+            str += "\n${i.toString()}"
+        }
+ 
+        return str;
+
+    }
+
 }
