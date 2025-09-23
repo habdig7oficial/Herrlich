@@ -6,6 +6,17 @@ class Pair <Generic1, Generic2>(
 ){
     override fun toString(): String {
         return "($t1, $t2)"
+    }  
+  
+    override fun equals(other: Any?) : Boolean {
+        if(other !is Pair<*, *>) 
+            return false;
+        else if(other === this)
+            return true
+        else if(this.t1 == other.t1)
+            return true; 
+        else 
+            return false
     } 
 }
 
@@ -15,7 +26,11 @@ class Hashmap <Generic1, Generic2> {
     private val arr: Array<LinkedList<Pair<Generic1, Generic2>>> = Array(arrLen) { LinkedList() }
 
     fun append(key: Generic1, value: Generic2){
-        arr[key.hashCode() % arrLen].append(Pair(key, value)) 
+        var targetList = arr[key.hashCode() % arrLen]
+        val obj = Pair(key, value)
+        
+        targetList.rmFirst(obj)
+        targetList.append(obj) 
     }
 
     fun getValue(key: Generic1) : Generic2? {

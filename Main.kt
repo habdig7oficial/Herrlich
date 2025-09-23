@@ -133,8 +133,6 @@ open class Interpreter{
 
         /* A REMOVER */
 
-        memory.append("LOREM", 0.76543217)
-
         var attrTo: String? = null
 
         var stmt = expr.getFirst() 
@@ -144,7 +142,7 @@ open class Interpreter{
                 reservedSymbols.indexOfFirst { symbl: Symbol ->
                     it[0] == symbl.op  
                  } 
-             }
+             } 
 
             val checkOp = try{
                 reservedSymbols[i].op.toString() 
@@ -157,19 +155,30 @@ open class Interpreter{
 
                 if(reservedSymbols[i] is Attribute && attrTo != null){
                     //(reservedSymbols[i] as Attribute).operate(attrTo, execStack.pop(), memory)  
-                    //println("\n EXEC ${execStack.top()}") 
-                    memory.append(attrTo, execStack.pop())
+                    //println("\n EXEC ${execStack.top()}")
+                     
+                    var variable = try{
+                        execStack.pop()
+                    }
+                    catch(err: Throwable){
+                        println("Not enough elements to operate")
+
+                        stmt = stmt.next
+                        continue 
+                    }
+                    memory.append(attrTo, variable)
                     println(memory)
-                    stmt = stmt.next
-                    continue
-                } 
+                    return variable
+                }  
 
                 var (v2, v1) = try{
                     arrayOf(execStack.pop(), execStack.pop()) 
                 }
                 catch(err: Throwable){
-                    print(attrTo)
-                    throw Exception("Not enough elements to operate") 
+                    //print(attrTo)
+                    println("Not enough elements to operate") 
+                    stmt = stmt.next
+                    continue 
                 }
                 execStack.push(reservedSymbols[i].operate(v1, v2))
                 println("\n${execStack.top()}") 
@@ -177,17 +186,17 @@ open class Interpreter{
             else if(stmt.element !in reservedTokens){
                 var getValue: Double? = stmt.element.toDoubleOrNull()
                 if(getValue == null){ 
+                    if(expr.getLast()?.element == "="){
+                        attrTo = stmt.element.uppercase()  
+                    }  
                     getValue = try{
                         memory.getValue(stmt.element.uppercase())
                     }
                     catch(err: Throwable){
-                        
-                        if(expr.getLast()?.element == "="){
-                            attrTo = stmt.element.uppercase()  
-                        }  
-                        else 
+                        if(attrTo == null || stmt.next == null) 
                             println("\nErro: variável ${stmt.element} não definida")  
-                        0.0
+                        stmt = stmt.next
+                        continue 
                     }
                 }
                 execStack.push(getValue)

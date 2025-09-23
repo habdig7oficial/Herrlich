@@ -43,6 +43,23 @@ public class LinkedList <Generic> {
         return this.root
     }
 
+
+    fun rmFirst(element: Generic) : Boolean {
+        var e: Node<Generic>? = root 
+        var last: Node<Generic>? = null 
+        for(i in 0..< this.length){ 
+            if(e?.element == element){
+                last?.next = e?.next
+                this.length--;
+                return true; 
+            }
+            last = e    
+            e = e?.next  
+        }
+        print(this)
+        return false;
+    }
+
     override fun toString(): String {
         var str: String = ""
         var e: Node<Generic>? = root
