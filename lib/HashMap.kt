@@ -30,7 +30,6 @@ class Hashmap <Generic1, Generic2> {
         val obj = Pair(key, value)
 
         targetList.rmFirst(obj)
-        print(key.hashCode() % arrLen) 
         targetList.append(obj) 
     }
 

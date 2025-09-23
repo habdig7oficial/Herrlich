@@ -45,7 +45,7 @@ public class Stack <T> {
         }
     }
 
-    public int sizeElements() {
+    public int size() {
         return topoStack + 1;
     }
 

@@ -169,6 +169,11 @@ open class Interpreter{
                     memory.append(attrTo, variable)
                     println(memory)
                     return variable
+                } 
+                else if(reservedSymbols[i] is Sub && (execStack.size() == 1 || stmt.next?.element == "=")){
+                    execStack.push((reservedSymbols[i] as Sub).operate(execStack.pop()))
+                    stmt = stmt.next
+                    continue
                 }  
 
                 var (v2, v1) = try{
