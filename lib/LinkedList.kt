@@ -50,7 +50,10 @@ public class LinkedList <Generic> {
         for(i in 0..< this.length){ 
             if(e?.element == element){
                 last?.next = e?.next
-                this.length--;
+                if(--this.length <= 0){
+                    this.leaf = null
+                    this.root = null
+                } 
                 return true; 
             }
             last = e    

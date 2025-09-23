@@ -28,8 +28,9 @@ class Hashmap <Generic1, Generic2> {
     fun append(key: Generic1, value: Generic2){
         var targetList = arr[key.hashCode() % arrLen]
         val obj = Pair(key, value)
-        
+
         targetList.rmFirst(obj)
+        print(key.hashCode() % arrLen) 
         targetList.append(obj) 
     }
 
