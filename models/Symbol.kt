@@ -1,3 +1,5 @@
+package models.Symbols
+
 import kotlin.math.pow 
 import lib.DataStructs.Hashmap
 

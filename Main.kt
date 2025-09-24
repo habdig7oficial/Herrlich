@@ -1,10 +1,10 @@
 import lib.DataStructs.*
 import java.io.File
-import Symbol
+import models.Symbols.*
 
 
 
-open class Interpreter{
+open class Interpreter {
     val reservedTokens: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
     val reservedSymbols: Array<Symbol> = arrayOf(Add('+'), Sub('-'), Mul('*'), Div('/'), Pow('^'), Mod('%'), BracketOpen('('), BracketClose(')'),  Attribute('='))
  
@@ -167,10 +167,10 @@ open class Interpreter{
                         continue 
                     }
                     memory.append(attrTo, variable)
-                    println(memory)
+                    //println(memory)
                     return variable
                 } 
-                else if(reservedSymbols[i] is Sub && (execStack.size() == 1 || stmt.next?.element == "=")){
+                else if(reservedSymbols[i] is Sub && (execStack.size() == 1)){
                     execStack.push((reservedSymbols[i] as Sub).operate(execStack.pop()))
                     stmt = stmt.next
                     continue
