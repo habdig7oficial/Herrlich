@@ -4,10 +4,16 @@ class Pair <Generic1, Generic2>(
     val t1 : Generic1,
     val t2 : Generic2
 ){
+    /*
     override fun toString(): String {
         return "($t1, $t2)"
     }  
-  
+  */
+
+    override fun toString(): String{
+        return "${t2!!::class.simpleName} $t1 = $t2" 
+    }
+
     override fun equals(other: Any?) : Boolean {
         if(other !is Pair<*, *>) 
             return false;
@@ -52,9 +58,9 @@ class Hashmap <Generic1, Generic2> {
         var str = ""    
 
         for(i in arr){
-            str += "\n${i.toString()}"
+            if(i.length > 0)
+                str += "\n${i.toCleanString()}"
         }
- 
         return str;
 
     }

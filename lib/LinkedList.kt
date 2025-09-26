@@ -74,4 +74,15 @@ public class LinkedList <Generic> {
         return "[$str]"
     }
 
+    fun toCleanString(): String {
+        var str: String = ""
+        var e: Node<Generic>? = root
+        for(i in 0..< this.length){
+            requireNotNull(e)
+            str += "${e.element}\n"
+            e = e.next
+        }
+        return str
+    }
+
 }
