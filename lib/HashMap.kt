@@ -66,6 +66,9 @@ class Hashmap <Generic1, Generic2> {
     override fun toString() : String{
         var str = ""    
 
+        if(this.length == 0)
+            return "There are no variables Declared"
+
         for(i in arr){
             if(i.length > 0)
                 str += "\n${i.toCleanString()}"

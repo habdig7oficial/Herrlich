@@ -220,7 +220,7 @@ open class Interpreter {
             return execStack.top() 
         }
         catch(err: Throwable){
-            throw Exception("No value in top of stack")
+            throw Exception("Nothing to Return")
         }
     }
 
