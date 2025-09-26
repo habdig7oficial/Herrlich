@@ -9,7 +9,7 @@ import java.lang.Exception
 open class Interpreter {   
     var memory: Hashmap<String, Double> = Hashmap()
 
-    val reservedTokens: Array<Command<String, Double>> = arrayOf(Vars("VARS", memory), Reset("RESET", memory))
+    val reservedTokens: Array<Command<String, Double>> = arrayOf(Vars("VARS", memory), Reset("RESET", memory), Exit("EXIT", memory))
     val reservedSymbols: Array<Symbol> = arrayOf(Add('+'), Sub('-'), Mul('*'), Div('/'), Pow('^'), Mod('%'), BracketOpen('('), BracketClose(')'),  Attribute('='))
  
     operator fun Array<Command<String, Double>>.contains(value: String) : Boolean {
