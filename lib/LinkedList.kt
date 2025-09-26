@@ -13,7 +13,10 @@ public class LinkedList <Generic> {
 
     private var root: Node<Generic>? = null
     private var leaf: Node<Generic>? = null
-    var length: Int = 0
+
+    var length : Int = 0; private set
+
+  
     
     fun append(element: Generic){
         if(root == null){
@@ -72,6 +75,17 @@ public class LinkedList <Generic> {
             e = e.next
         }
         return "[$str]"
+    }
+
+    fun toCleanString(): String {
+        var str: String = ""
+        var e: Node<Generic>? = root
+        for(i in 0..< this.length){
+            requireNotNull(e)
+            str += "${e.element}\n"
+            e = e.next
+        }
+        return str
     }
 
 }

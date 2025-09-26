@@ -18,10 +18,16 @@ class Repl : Interpreter() {
 
             val polish = this.parser(str)
             log.appendText("\n\n${polish.toString()}\n") 
-            val res = this.interprete(polish)
+            val res = try{
+                this.interprete(polish)
+            }
+            catch(err: Throwable){
+                println("\n${err.message}") 
+                continue
+            }
             println(res) 
             log.appendText(res.toString()) 
             log.appendText("\n-------------------\n")
-        }
+        } 
     }
 }

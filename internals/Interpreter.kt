@@ -2,17 +2,24 @@ package internals
 
 import lib.DataStructs.*
 import models.Symbols.*
+import models.Commands.*
+import java.lang.Exception 
 
 
-open class Interpreter {
-    val reservedTokens: Array<String> = arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
+open class Interpreter {   
+    var memory: Hashmap<String, Double> = Hashmap()
+
+    val reservedTokens: Array<Command<String, Double>> = arrayOf(Vars("VARS", memory), Reset("RESET", memory))
     val reservedSymbols: Array<Symbol> = arrayOf(Add('+'), Sub('-'), Mul('*'), Div('/'), Pow('^'), Mod('%'), BracketOpen('('), BracketClose(')'),  Attribute('='))
  
-    operator fun Array<Symbol>.contains(value: Char) : Boolean {
-        return this.any { it.op == value }
+    operator fun Array<Command<String, Double>>.contains(value: String) : Boolean {
+        return this.any {it.name == value} 
     }
 
-    val memory: Hashmap<String, Double> = Hashmap()
+    operator fun Array<Symbol>.contains(value: Char) : Boolean {
+        return this.any { it.op == value }
+    } 
+
 
     fun tokenize(textStream : String) : LinkedList<String> {
 
@@ -55,8 +62,9 @@ open class Interpreter {
             i = stmt.element.let { 
                 reservedSymbols.indexOfFirst { symbl: Symbol ->
                     it[0] == symbl.op  
-                 } 
-             }
+                } 
+            }
+
            if( i != -1 ){
                // println(stack) 
 
@@ -92,7 +100,7 @@ open class Interpreter {
                     stack.top()
                 }
                 catch(err: Throwable){
-                    NullSymbl('\u0000') 
+                    NullSymbl('\u0000')  
                 }
 
                 while(!stack.isEmpty() && top.priority >= reservedSymbols[i].priority){ 
@@ -104,7 +112,7 @@ open class Interpreter {
                         stack.top()
                     }
                     catch(err: Throwable){
-                        NullSymbl('\u0000') 
+                       throw Exception("${err.message}")
                     }
                 }
                 stack.push(reservedSymbols[i])  
@@ -136,22 +144,20 @@ open class Interpreter {
         var attrTo: String? = null
 
         var stmt = expr.getFirst() 
-        var i: Int 
-        while(stmt != null){
-            i = stmt.element.let { 
-                reservedSymbols.indexOfFirst { symbl: Symbol ->
-                    it[0] == symbl.op  
-                 } 
-             } 
 
-            val checkOp = try{
-                reservedSymbols[i].op.toString() 
+        while(stmt != null){
+            var (i, j) = stmt.element.let { 
+                arrayOf(
+                    reservedSymbols.indexOfFirst { symbl: Symbol ->
+                        it[0] == symbl.op
+                    },
+                    reservedTokens.indexOfLast { tk: Command<String, Double> -> 
+                        it.uppercase() == tk.name  
+                    }
+                )
             }
-            catch(err : Throwable){
-                "\u0000" 
-            } 
-             
-            if(stmt.element == checkOp){
+
+            if(i != -1){
 
                 if(reservedSymbols[i] is Attribute && attrTo != null){
                     //(reservedSymbols[i] as Attribute).operate(attrTo, execStack.pop(), memory)  
@@ -161,10 +167,7 @@ open class Interpreter {
                         execStack.pop()
                     }
                     catch(err: Throwable){
-                        println("Not enough elements to operate")
-
-                        stmt = stmt.next
-                        continue 
+                        throw Exception("Not enough elements to operate")
                     }
                     memory.append(attrTo, variable)
                     //println(memory)
@@ -181,14 +184,18 @@ open class Interpreter {
                 }
                 catch(err: Throwable){
                     //print(attrTo)
-                    println("Not enough elements to operate") 
-                    stmt = stmt.next
-                    continue 
+                    throw Exception("Not enough elements to operate\ncaused by: ${err.message}")  
                 }
                 execStack.push(reservedSymbols[i].operate(v1, v2))
                 println("\n${execStack.top()}") 
+            } 
+            else if(j != -1){
+                reservedTokens[j].call() 
+
+                stmt = stmt.next
+                continue 
             }
-            else if(stmt.element !in reservedTokens){
+            else { 
                 var getValue: Double? = stmt.element.toDoubleOrNull()
                 if(getValue == null){ 
                     if(expr.getLast()?.element == "="){
@@ -198,8 +205,9 @@ open class Interpreter {
                         memory.getValue(stmt.element.uppercase())
                     }
                     catch(err: Throwable){
-                        if(attrTo == null || stmt.next == null) 
-                            println("\nErro: variável ${stmt.element} não definida")  
+                        if(attrTo == null || stmt.next == null){
+                            throw Exception("\nErro: variável ${stmt.element} não definida")
+                        } 
                         stmt = stmt.next
                         continue 
                     }
@@ -212,7 +220,7 @@ open class Interpreter {
             return execStack.top() 
         }
         catch(err: Throwable){
-            return 0.0  
+            throw Exception("No value in top of stack")
         }
     }
 

@@ -4,10 +4,16 @@ class Pair <Generic1, Generic2>(
     val t1 : Generic1,
     val t2 : Generic2
 ){
+    /*
     override fun toString(): String {
         return "($t1, $t2)"
     }  
-  
+  */
+
+    override fun toString(): String{
+        return "${t2!!::class.simpleName} $t1 = $t2" 
+    }
+
     override fun equals(other: Any?) : Boolean {
         if(other !is Pair<*, *>) 
             return false;
@@ -23,13 +29,16 @@ class Pair <Generic1, Generic2>(
 class Hashmap <Generic1, Generic2> {
     final val arrLen = 26
     
-    private val arr: Array<LinkedList<Pair<Generic1, Generic2>>> = Array(arrLen) { LinkedList() }
+    private var arr: Array<LinkedList<Pair<Generic1, Generic2>>> = Array(arrLen) { LinkedList() }
+    private var length: Int = 0; private set
 
     fun append(key: Generic1, value: Generic2){
         var targetList = arr[key.hashCode() % arrLen]
         val obj = Pair(key, value)
 
-        targetList.rmFirst(obj)
+        if(!targetList.rmFirst(obj)){
+            this.length++
+        }
         targetList.append(obj) 
     }
 
@@ -40,6 +49,7 @@ class Hashmap <Generic1, Generic2> {
 
         while(elem != null){
             if(elem.element.t1 == key){
+                this.length--
                 return elem.element.t2
             }
             elem = elem.next
@@ -48,13 +58,18 @@ class Hashmap <Generic1, Generic2> {
     
     }
 
+    fun cleanAll(): Unit{
+        this.arr = Array(arrLen) { LinkedList() }
+        this.length = 0
+    }
+
     override fun toString() : String{
         var str = ""    
 
         for(i in arr){
-            str += "\n${i.toString()}"
+            if(i.length > 0)
+                str += "\n${i.toCleanString()}"
         }
- 
         return str;
 
     }
