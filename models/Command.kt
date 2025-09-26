@@ -22,11 +22,29 @@ abstract class Command <Generic1, Generic2> (
 }   
   
 
-class Vars <Generic1, Generic2> (name: String, memory: HashMap<Generic1, Generic2>) : Command<Generic1, Generic2>(name, memory){
+class Vars <Generic1, Generic2> (
+    name: String,
+    memory: HashMap<Generic1, Generic2>
+) : Command <Generic1, Generic2> (
+    name, 
+    memory
+){
     override fun call(){
         print(memory)
     }
 } 
+
+class Reset <Generic1, Generic2>(
+    name: String,
+    memory: HashMap<Generic1, Generic2>
+) : Command <Generic1, Generic2>(
+    name, 
+    memory
+){
+    override fun call() : Unit {
+        this.memory.cleanAll()
+    }
+}
 
 
 /*

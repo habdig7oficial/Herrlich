@@ -13,7 +13,10 @@ public class LinkedList <Generic> {
 
     private var root: Node<Generic>? = null
     private var leaf: Node<Generic>? = null
-    var length: Int = 0
+
+    var length : Int = 0; private set
+
+  
     
     fun append(element: Generic){
         if(root == null){

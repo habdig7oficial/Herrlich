@@ -29,13 +29,16 @@ class Pair <Generic1, Generic2>(
 class Hashmap <Generic1, Generic2> {
     final val arrLen = 26
     
-    private val arr: Array<LinkedList<Pair<Generic1, Generic2>>> = Array(arrLen) { LinkedList() }
+    private var arr: Array<LinkedList<Pair<Generic1, Generic2>>> = Array(arrLen) { LinkedList() }
+    private var length: Int = 0; private set
 
     fun append(key: Generic1, value: Generic2){
         var targetList = arr[key.hashCode() % arrLen]
         val obj = Pair(key, value)
 
-        targetList.rmFirst(obj)
+        if(!targetList.rmFirst(obj)){
+            this.length++
+        }
         targetList.append(obj) 
     }
 
@@ -46,12 +49,18 @@ class Hashmap <Generic1, Generic2> {
 
         while(elem != null){
             if(elem.element.t1 == key){
+                this.length--
                 return elem.element.t2
             }
             elem = elem.next
         }
         throw Exception("Variable Not Declared") 
     
+    }
+
+    fun cleanAll(): Unit{
+        this.arr = Array(arrLen) { LinkedList() }
+        this.length = 0
     }
 
     override fun toString() : String{

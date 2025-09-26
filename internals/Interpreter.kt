@@ -2,13 +2,14 @@ package internals
 
 import lib.DataStructs.*
 import models.Symbols.*
-import models.Commands.* 
+import models.Commands.*
+import java.lang.Exception 
 
 
 open class Interpreter {   
-    val memory: Hashmap<String, Double> = Hashmap() 
+    var memory: Hashmap<String, Double> = Hashmap()
 
-    val reservedTokens: Array<Command<String, Double>> = arrayOf(Vars("VARS", memory))
+    val reservedTokens: Array<Command<String, Double>> = arrayOf(Vars("VARS", memory), Reset("RESET", memory))
     val reservedSymbols: Array<Symbol> = arrayOf(Add('+'), Sub('-'), Mul('*'), Div('/'), Pow('^'), Mod('%'), BracketOpen('('), BracketClose(')'),  Attribute('='))
  
     operator fun Array<Command<String, Double>>.contains(value: String) : Boolean {
@@ -151,7 +152,7 @@ open class Interpreter {
                         it[0] == symbl.op
                     },
                     reservedTokens.indexOfLast { tk: Command<String, Double> -> 
-                        it == tk.name  
+                        it.uppercase() == tk.name  
                     }
                 )
             }
@@ -166,10 +167,7 @@ open class Interpreter {
                         execStack.pop()
                     }
                     catch(err: Throwable){
-                        println("Not enough elements to operate")
-
-                        stmt = stmt.next
-                        continue 
+                        throw Exception("Not enough elements to operate")
                     }
                     memory.append(attrTo, variable)
                     //println(memory)
@@ -186,9 +184,7 @@ open class Interpreter {
                 }
                 catch(err: Throwable){
                     //print(attrTo)
-                    println("Not enough elements to operate") 
-                    stmt = stmt.next
-                    continue 
+                    throw Exception("Not enough elements to operate\n caused by: ${err.message}")  
                 }
                 execStack.push(reservedSymbols[i].operate(v1, v2))
                 println("\n${execStack.top()}") 
@@ -209,8 +205,9 @@ open class Interpreter {
                         memory.getValue(stmt.element.uppercase())
                     }
                     catch(err: Throwable){
-                        if(attrTo == null || stmt.next == null) 
-                            println("\nErro: variável ${stmt.element} não definida")  
+                        if(attrTo == null || stmt.next == null){
+                            throw Exception("\nErro: variável ${stmt.element} não definida")
+                        } 
                         stmt = stmt.next
                         continue 
                     }
@@ -223,7 +220,7 @@ open class Interpreter {
             return execStack.top() 
         }
         catch(err: Throwable){
-            return 0.0  
+            throw Exception("No value in top of stack")
         }
     }
 
