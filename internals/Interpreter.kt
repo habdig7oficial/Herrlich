@@ -100,7 +100,7 @@ open class Interpreter {
                     stack.top()
                 }
                 catch(err: Throwable){
-                    NullSymbl('\u0000') 
+                    NullSymbl('\u0000')  
                 }
 
                 while(!stack.isEmpty() && top.priority >= reservedSymbols[i].priority){ 
@@ -112,7 +112,7 @@ open class Interpreter {
                         stack.top()
                     }
                     catch(err: Throwable){
-                        NullSymbl('\u0000') 
+                       throw Exception("${err.message}")
                     }
                 }
                 stack.push(reservedSymbols[i])  
@@ -184,7 +184,7 @@ open class Interpreter {
                 }
                 catch(err: Throwable){
                     //print(attrTo)
-                    throw Exception("Not enough elements to operate\n caused by: ${err.message}")  
+                    throw Exception("Not enough elements to operate\ncaused by: ${err.message}")  
                 }
                 execStack.push(reservedSymbols[i].operate(v1, v2))
                 println("\n${execStack.top()}") 
