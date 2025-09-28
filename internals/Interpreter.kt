@@ -3,21 +3,21 @@ package internals
 import lib.DataStructs.*
 import models.Symbols.*
 import models.Commands.*
-import java.lang.Exception 
+import java.lang.Exception
 
 
 open class Interpreter {   
     var memory: Hashmap<String, Double> = Hashmap(); private set
     var cmdQueue: Queue<LinkedList<String>> = Queue(10); private set 
 
-    val recWrapper = Rec("REC", memory, cmdQueue)
+    val recWrapper = Rec("REC", memory, cmdQueue, arrayOf("REC","STOP", "PLAY", "ERASE"))
 
     val reservedTokens: Array<Command<String, Double>> = arrayOf(
         Vars("VARS", memory),
         Reset("RESET", memory),
         recWrapper,
         Stop("STOP",memory, cmdQueue, recWrapper), 
-        Erase("ERASE", memory, cmdQueue, 10),
+        Erase("ERASE", memory, cmdQueue, 10),  
         Play("PLAY", memory, cmdQueue, recWrapper),
         Exit("EXIT", memory)
     ) 
@@ -156,10 +156,6 @@ open class Interpreter {
 
         var stmt = expr.getFirst() 
 
-        if(recWrapper.recMode){
-            this.recWrapper.load(expr)
-        }
-
         while(stmt != null){
             var (i, j) = stmt.element.let { 
                 arrayOf(
@@ -203,15 +199,20 @@ open class Interpreter {
                 execStack.push(reservedSymbols[i].operate(v1, v2))
                 println("\n${execStack.top()}") 
             } 
-            else if(j != -1 ){
+            else if(j != -1){
                 try{
+                    if(recWrapper.recMode &&
+                        reservedTokens[j] !is Rec<*,*,*> &&
+                        reservedTokens[j] !is Play<*,*,*> &&
+                        reservedTokens[j] !is Erase<*,*,*>
+                        ){
 
-                    if(recWrapper.recMode && 
-                    ( (reservedTokens[j] is Rec<*,*,*>) || 
-                      (reservedTokens[j] is Stop<*,*,*>) || 
-                    ))
+                        this.recWrapper.load(expr)
+                        break
+                    }
 
                     if(reservedTokens[j] is Play<*,*,*>){
+                        cmdQueue.dequeue()
                         while(!cmdQueue.isEmpty()){
                             println("\n${this.interprete(cmdQueue.dequeue())}")
                         }
@@ -228,8 +229,8 @@ open class Interpreter {
             }
             else { 
                 if(recWrapper.recMode){
-                    stmt = stmt.next
-                    continue
+                    this.recWrapper.load(expr)
+                    break
                 }
 
                 var getValue: Double? = stmt.element.toDoubleOrNull()

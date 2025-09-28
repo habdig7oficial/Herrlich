@@ -51,7 +51,8 @@ class Reset <Generic1, Generic2>(
 class Rec <Generic1, Generic2, Generic3>(
     name: String,
     memory: HashMap<Generic1, Generic2>,
-    var queue: Queue<Generic3> 
+    var queue: Queue<Generic3>,
+    val invalid: Array<String>  
 ) : Command<Generic1, Generic2>(name, memory){
 
     var recMode : Boolean = false;
