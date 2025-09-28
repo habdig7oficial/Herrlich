@@ -78,7 +78,6 @@ open class Interpreter {
 
            if( i != -1 ){
                // println(stack) 
-
                 if(reservedSymbols[i].op == '('){
                     stack.push(reservedSymbols[i]) 
                     stmt = stmt.next 
@@ -99,7 +98,13 @@ open class Interpreter {
                         else 
                             break
                     }
-                    if(!stack.isEmpty() && stack.top().op == '(')
+                    var par = try{
+                        stack.top().op
+                    } 
+                    catch(err: Throwable){
+                        print(err.message)
+                     }
+                    if(!stack.isEmpty() && par == '(')
                         stack.pop()
                     println("\nFINAL ${stack}") 
                 
@@ -114,7 +119,7 @@ open class Interpreter {
                     NullSymbl('\u0000')  
                 }
 
-                while(!stack.isEmpty() && top.priority >= reservedSymbols[i].priority){ 
+                while(!stack.isEmpty() && top.priority > reservedSymbols[i].priority){ 
                     //println(stack)
    
                     polishNotation.append(stack.pop().op.toString())
@@ -201,15 +206,19 @@ open class Interpreter {
             } 
             else if(j != -1){
                 try{
-                    if(recWrapper.recMode &&
+                    if(reservedTokens[j] is Stop<*,*, *>){
+                        reservedTokens[j].call()
+                    }
+                    else if(recWrapper.recMode &&
                         reservedTokens[j] !is Rec<*,*,*> &&
                         reservedTokens[j] !is Play<*,*,*> &&
-                        reservedTokens[j] !is Erase<*,*,*>
-                        ){
-
+                        reservedTokens[j] !is Erase<*,*,*> 
+                    ){  
                         this.recWrapper.load(expr)
                         break
                     }
+                    else if(recWrapper.recMode) 
+                        throw Exception("Invalid Command to REC")
 
                     if(reservedTokens[j] is Play<*,*,*>){
                         cmdQueue.dequeue()

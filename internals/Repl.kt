@@ -25,7 +25,7 @@ class Repl : Interpreter() {
             log.appendText("\n\n${polish.toString()}\n") 
 
             val res = try{
-                this.interprete(polish)
+                //this.interprete(polish)
             }
             catch(err: Throwable){
                 println("\n${err.message}") 
