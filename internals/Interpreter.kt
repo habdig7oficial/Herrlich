@@ -221,7 +221,6 @@ open class Interpreter {
                         throw Exception("Invalid Command to REC")
 
                     if(reservedTokens[j] is Play<*,*,*>){
-                        cmdQueue.dequeue()
                         while(!cmdQueue.isEmpty()){
                             println("\n${this.interprete(cmdQueue.dequeue())}")
                         }
