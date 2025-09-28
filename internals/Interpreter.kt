@@ -7,9 +7,17 @@ import java.lang.Exception
 
 
 open class Interpreter {   
-    var memory: Hashmap<String, Double> = Hashmap()
+    var memory: Hashmap<String, Double> = Hashmap(); private set
+    var cmdQueue: Queue<LinkedList<String>> = Queue(10); private set 
 
-    val reservedTokens: Array<Command<String, Double>> = arrayOf(Vars("VARS", memory), Reset("RESET", memory), Exit("EXIT", memory))
+    val recWrapper = Rec("REC", memory, cmdQueue)
+
+    val reservedTokens: Array<Command<String, Double>> = arrayOf(
+        Vars("VARS", memory),
+        Reset("RESET", memory),
+        recWrapper,
+        Exit("EXIT", memory)
+    ) 
     val reservedSymbols: Array<Symbol> = arrayOf(Add('+'), Sub('-'), Mul('*'), Div('/'), Pow('^'), Mod('%'), BracketOpen('('), BracketClose(')'),  Attribute('='))
  
     operator fun Array<Command<String, Double>>.contains(value: String) : Boolean {
@@ -57,7 +65,7 @@ open class Interpreter {
         var polishNotation: LinkedList<String> = LinkedList<String>()
         var stmt: Node<String>? = expr.getFirst()
         var i: Int 
-        //requireNotNull(stmt)
+
         while(stmt != null){
             i = stmt.element.let { 
                 reservedSymbols.indexOfFirst { symbl: Symbol ->
@@ -145,6 +153,11 @@ open class Interpreter {
 
         var stmt = expr.getFirst() 
 
+        if(recWrapper.recMode){
+            this.recWrapper.load(expr)
+            throw Exception("Nothing to Return; Stack is empty")
+        }
+
         while(stmt != null){
             var (i, j) = stmt.element.let { 
                 arrayOf(
@@ -220,7 +233,7 @@ open class Interpreter {
             return execStack.top() 
         }
         catch(err: Throwable){
-            throw Exception("Nothing to Return")
+            throw Exception("Nothing to Return; Stack is empty")
         }
     }
 

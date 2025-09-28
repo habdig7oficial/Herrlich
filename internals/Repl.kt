@@ -10,6 +10,11 @@ class Repl : Interpreter() {
 
     fun run() : Unit {
         while(true) {
+
+            if(this.recWrapper.recMode){
+               print("REC ${this.recWrapper.length()} / ${this.recWrapper.maxSize()}") 
+            } 
+
             print("> ")
             val str = this.tokenize(readln())
             //print(str.length)
@@ -18,6 +23,7 @@ class Repl : Interpreter() {
 
             val polish = this.parser(str)
             log.appendText("\n\n${polish.toString()}\n") 
+
             val res = try{
                 this.interprete(polish)
             }

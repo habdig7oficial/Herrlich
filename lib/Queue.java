@@ -5,29 +5,36 @@ public class Queue <T>{
 	private static final int TAM_DEFAULT = 100;
 	private int inicio, fim, qtde;
 	private T e[ ];
+	private int maxSize;
+
 	// Métodos públicos
 	public Queue(int tamanho) {// construtor 1 (com tamanho)
 		  this.inicio = this.fim = this.qtde = 0;
 		  e = (T[]) new Object[tamanho];
+		  this.maxSize = tamanho;
 	}
 	
 	public Queue() {  // construtor 2 (sem parâmetros).
 		this(TAM_DEFAULT);
 	}
 
+	public int maxSize(){
+		return this.maxSize;
+	}
+
 	// verifica se a fila está vazia
-	public boolean qIsEmpty() {
+	public boolean isEmpty() {
 		return (qtde == 0);
 	}
 	
 	// Verifica se a fila está cheia
-    public boolean qIsFull() {
+    public boolean isFull() {
     	return (qtde == e.length); 	
     }
     
     // insere um elemento no final da fila
 	public void enqueue(T e) throws Exception {
-		if (! qIsFull( )){
+		if (!isFull()){
 			    this.e[this.fim++] = e;
 			    this.fim = this.fim % this.e.length;
 			    this.qtde++;
@@ -38,7 +45,7 @@ public class Queue <T>{
 	// remove um elemento do final da fila
     public T dequeue() throws Exception {
     	  T aux;
-    	  if (! qIsEmpty( )){
+    	  if (! isEmpty( )){
     	   aux =  this.e[ this.inicio];
     	   this.inicio = ++this.inicio % this.e.length;
     	   this.qtde--;
@@ -50,7 +57,7 @@ public class Queue <T>{
     // retorna quem está no início da fila
     // caso a fila não esteja vazia
 	public T front() throws Exception {
-		if (! qIsEmpty())
+		if (! isEmpty())
 			return e[inicio];
 		else{
 			throw new Exception("underflow - Esvaziamento de Fila");
@@ -58,7 +65,7 @@ public class Queue <T>{
 	}
 	// retorna quem está no final da fila caso ela não esteja vazia
 	public T rear() throws Exception {
-		if (! qIsEmpty()){
+		if (! isEmpty()){
 			  int pfinal;
 			  if (this.fim != 0) pfinal = this.fim - 1;
 			  else pfinal = this.e.length - 1;
@@ -68,7 +75,7 @@ public class Queue <T>{
 		}			
 	}
 	// Retorna o total de elementos da fila
-	public	int totalElementos(){
+	public	int length(){
 		return qtde;
 	}
 	
