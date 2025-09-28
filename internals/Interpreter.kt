@@ -222,7 +222,8 @@ open class Interpreter {
 
                     if(reservedTokens[j] is Play<*,*,*>){
                         while(!cmdQueue.isEmpty()){
-                            println("\n${this.interprete(cmdQueue.dequeue())}")
+                            var stored = cmdQueue.dequeue()
+                            println("${recWrapper.length()}) ${stored.toString()}:\n${this.interprete(stored)}\n")
                         }
                     }
 
