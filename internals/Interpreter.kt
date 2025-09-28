@@ -16,6 +16,9 @@ open class Interpreter {
         Vars("VARS", memory),
         Reset("RESET", memory),
         recWrapper,
+        Stop("STOP",memory, cmdQueue, recWrapper), 
+        Erase("ERASE", memory, cmdQueue, 10),
+        Play("PLAY", memory, cmdQueue, recWrapper),
         Exit("EXIT", memory)
     ) 
     val reservedSymbols: Array<Symbol> = arrayOf(Add('+'), Sub('-'), Mul('*'), Div('/'), Pow('^'), Mod('%'), BracketOpen('('), BracketClose(')'),  Attribute('='))
@@ -155,7 +158,6 @@ open class Interpreter {
 
         if(recWrapper.recMode){
             this.recWrapper.load(expr)
-            throw Exception("Nothing to Return; Stack is empty")
         }
 
         while(stmt != null){
@@ -170,8 +172,7 @@ open class Interpreter {
                 )
             }
 
-            if(i != -1){
-
+            if(i != -1 && !recWrapper.recMode){
                 if(reservedSymbols[i] is Attribute && attrTo != null){
                     //(reservedSymbols[i] as Attribute).operate(attrTo, execStack.pop(), memory)  
                     //println("\n EXEC ${execStack.top()}")
@@ -202,13 +203,35 @@ open class Interpreter {
                 execStack.push(reservedSymbols[i].operate(v1, v2))
                 println("\n${execStack.top()}") 
             } 
-            else if(j != -1){
-                reservedTokens[j].call() 
+            else if(j != -1 ){
+                try{
+
+                    if(recWrapper.recMode && 
+                    ( (reservedTokens[j] is Rec<*,*,*>) || 
+                      (reservedTokens[j] is Stop<*,*,*>) || 
+                    ))
+
+                    if(reservedTokens[j] is Play<*,*,*>){
+                        while(!cmdQueue.isEmpty()){
+                            println("\n${this.interprete(cmdQueue.dequeue())}")
+                        }
+                    }
+
+                    reservedTokens[j].call() 
+                }
+                catch(err: Throwable){
+                    println(err.message)
+                }
 
                 stmt = stmt.next
                 continue 
             }
             else { 
+                if(recWrapper.recMode){
+                    stmt = stmt.next
+                    continue
+                }
+
                 var getValue: Double? = stmt.element.toDoubleOrNull()
                 if(getValue == null){ 
                     if(expr.getLast()?.element == "="){

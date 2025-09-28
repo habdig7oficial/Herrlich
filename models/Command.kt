@@ -54,16 +54,15 @@ class Rec <Generic1, Generic2, Generic3>(
     var queue: Queue<Generic3> 
 ) : Command<Generic1, Generic2>(name, memory){
 
-    var recMode : Boolean = false; private set
+    var recMode : Boolean = false;
 
     fun load(expr: Generic3){
-            queue.enqueue(expr)
-            
+        queue.enqueue(expr)
+ 
         if(queue.isFull()){
             recMode = false
             println("Queue is Full. Disabling REC MODE")
-        }
-            
+        }    
     }
 
     fun length() : Int {
@@ -75,7 +74,50 @@ class Rec <Generic1, Generic2, Generic3>(
     }
 
     override fun call() : Unit{
-        this.recMode = true
+        if(!queue.isFull())
+            this.recMode = true
+        else{
+            throw Exception("REC queue is full")
+        }
+    }
+}
+
+class Stop <Generic1, Generic2, Generic3>(
+    name: String,
+    memory: HashMap<Generic1, Generic2>,
+    var queue: Queue<Generic3>,
+    var mode: Rec<Generic1, Generic2, Generic3>
+) : Command<Generic1, Generic2>(name, memory){
+
+    override fun call() : Unit{
+        if(mode.recMode == true)    
+            mode.recMode = false
+        else
+            throw Exception("\nNot in Rec Mode")
+    }
+}
+
+class Erase <Generic1, Generic2, Generic3>(
+    name: String,
+    memory: HashMap<Generic1, Generic2>,
+    var queue: Queue<Generic3>,
+    val newSize: Int
+) : Command<Generic1, Generic2>(name, memory){
+
+    override fun call() : Unit{
+        queue.clean()
+    }
+}
+
+class Play <Generic1, Generic2, Generic3>(
+    name: String,
+    memory: HashMap<Generic1, Generic2>,
+    var queue: Queue<Generic3>,
+    var mode: Rec<Generic1, Generic2, Generic3>
+) : Command<Generic1, Generic2>(name, memory){
+
+    override fun call() : Unit{
+        println("All Commands Played")
     }
 }
 

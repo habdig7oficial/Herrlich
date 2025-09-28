@@ -78,7 +78,12 @@ public class Queue <T>{
 	public	int length(){
 		return qtde;
 	}
-	
+
+	public void clean(){
+		  this.inicio = this.fim = this.qtde = 0;
+		  e = (T[]) new Object[maxSize];
+	}
+
 	// Sobrescrita/sobreposição (override) do método toString(), que veio da superclasse Object.
 	// O retorno do método toString() é a representação de um objeto em formato string, e toString()
 	// geralmente é executado (de forma implícita) quando passamos um objeto ao System.out.print*().
