@@ -3,11 +3,21 @@ import lib.DataStructs.Hashmap as HashMap
 import lib.DataStructs.Queue as Queue
 import kotlin.system.exitProcess
 
-abstract class Command <Generic1, Generic2> (
+abstract class Command <Generic1, Generic2, Generic3> (
     val name: String,  
     var memory: HashMap<Generic1, Generic2>
 ){ 
-    abstract fun call(): Unit
+    abstract var overload_min: Int;
+    abstract var overload_max: Int;
+
+    fun checkAndCall(vararg args : Generic3){
+        if(args.size > this.overload_max || args.size < overload_min){
+            throw Exception("Invalid Overload!\nExpected between ${overload_min} AND ${overload_max} But received ${args.size}")
+        }
+        this.call(*args)
+    }
+
+    abstract fun call(vararg args : Generic3): Unit
 
     override fun equals(other: Any?) : Boolean{
         if(other !is Command<*,*>)
@@ -31,7 +41,10 @@ class Vars <Generic1, Generic2> (
     name, 
     memory
 ){
-    override fun call(){
+    override var overload_min: Int = 0;
+    override var overload_max: Int = 0;
+
+    override fun call(vararg args : String): Unit {
         print(memory)
     }
 } 
@@ -43,7 +56,10 @@ class Reset <Generic1, Generic2>(
     name, 
     memory
 ){
-    override fun call() : Unit {
+    override var overload_min: Int = 0;
+    override var overload_max: Int = 0;
+
+    override fun call(vararg args : String): Unit {
         this.memory.cleanAll()
     }
 }
@@ -52,10 +68,12 @@ class Rec <Generic1, Generic2, Generic3>(
     name: String,
     memory: HashMap<Generic1, Generic2>,
     var queue: Queue<Generic3>,
-    val invalid: Array<String>  
 ) : Command<Generic1, Generic2>(name, memory){
 
     var recMode : Boolean = false;
+
+    override var overload_min: Int = 0;
+    override var overload_max: Int = 0;
 
     fun load(expr: Generic3){
         queue.enqueue(expr)
@@ -74,7 +92,7 @@ class Rec <Generic1, Generic2, Generic3>(
         return queue.maxSize()
     }
 
-    override fun call() : Unit{
+    override fun call(vararg args : String): Unit {
         if(!queue.isFull())
             this.recMode = true
         else{
@@ -90,7 +108,10 @@ class Stop <Generic1, Generic2, Generic3>(
     var mode: Rec<Generic1, Generic2, Generic3>
 ) : Command<Generic1, Generic2>(name, memory){
 
-    override fun call() : Unit{
+    override var overload_min: Int = 0;
+    override var overload_max: Int = 0;
+
+    override fun call(vararg args : String): Unit {
         if(mode.recMode == true)    
             mode.recMode = false
         else
@@ -102,10 +123,12 @@ class Erase <Generic1, Generic2, Generic3>(
     name: String,
     memory: HashMap<Generic1, Generic2>,
     var queue: Queue<Generic3>,
-    val newSize: Int
 ) : Command<Generic1, Generic2>(name, memory){
 
-    override fun call() : Unit{
+    override var overload_min: Int = 0;
+    override var overload_max: Int = 0;
+
+    override fun call(vararg args : String): Unit {
         queue.clean()
     }
 }
@@ -117,7 +140,10 @@ class Play <Generic1, Generic2, Generic3>(
     var mode: Rec<Generic1, Generic2, Generic3>
 ) : Command<Generic1, Generic2>(name, memory){
 
-    override fun call() : Unit{
+    override var overload_min: Int = 0;
+    override var overload_max: Int = 0;
+
+    override fun call(vararg args : String): Unit {
         println("All Commands Played")
     }
 }
@@ -129,7 +155,10 @@ class Exit <Generic1, Generic2>(
     name,
     memory
 ){
-    override fun call() : Unit{
+    override var overload_min: Int = 0;
+    override var overload_max: Int = 0;
+
+    override fun call(vararg args : String): Unit {
         println("Cleaning Memory...")
         this.memory.cleanAll()
         println("Thank you for using Herrlich Interpreter\nAuf wiedersehen!")
@@ -141,3 +170,18 @@ class Exit <Generic1, Generic2>(
 /*
 arrayOf("VARS", "RESET", "REC", "STOP", "PLAY", "ERASE","EXIT")
 */
+
+
+class Load <Generic1, Generic2>(
+    name: String,
+    memory: HashMap<Generic1, Generic2>,
+) : Command<Generic1, Generic2>(
+    name,
+    memory
+){
+    override var overload_min = 1
+    override var overload_max = 1
+    override fun call(vararg args : String): Unit {
+        print("${this.overload_min}")
+    }
+}

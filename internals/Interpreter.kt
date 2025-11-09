@@ -10,16 +10,17 @@ open class Interpreter {
     var memory: Hashmap<String, Double> = Hashmap(); private set
     var cmdQueue: Queue<LinkedList<String>> = Queue(10); private set 
 
-    val recWrapper = Rec("REC", memory, cmdQueue, arrayOf("REC","STOP", "PLAY", "ERASE"))
+    val recWrapper = Rec("REC", memory, cmdQueue)
 
     val reservedTokens: Array<Command<String, Double>> = arrayOf(
         Vars("VARS", memory),
         Reset("RESET", memory),
-        recWrapper,
+        recWrapper, 
         Stop("STOP",memory, cmdQueue, recWrapper), 
-        Erase("ERASE", memory, cmdQueue, 10),  
-        Play("PLAY", memory, cmdQueue, recWrapper),
-        Exit("EXIT", memory)
+        Erase("ERASE", memory, cmdQueue),  
+        Play("RUN", memory, cmdQueue, recWrapper),
+        Exit("EXIT", memory),
+        Load("LOAD", memory)
     ) 
     val reservedSymbols: Array<Symbol> = arrayOf(Add('+'), Sub('-'), Mul('*'), Div('/'), Pow('^'), Mod('%'), BracketOpen('('), BracketClose(')'),  Attribute('='))
  
@@ -206,28 +207,8 @@ open class Interpreter {
             } 
             else if(j != -1){
                 try{
-                    if(reservedTokens[j] is Stop<*,*, *>){
-                        reservedTokens[j].call()
-                    }
-                    else if(recWrapper.recMode &&
-                        reservedTokens[j] !is Rec<*,*,*> &&
-                        reservedTokens[j] !is Play<*,*,*> &&
-                        reservedTokens[j] !is Erase<*,*,*> 
-                    ){  
-                        this.recWrapper.load(expr)
-                        break
-                    }
-                    else if(recWrapper.recMode) 
-                        throw Exception("Invalid Command to REC")
-
-                    if(reservedTokens[j] is Play<*,*,*>){
-                        while(!cmdQueue.isEmpty()){
-                            var stored = cmdQueue.dequeue()
-                            println("${recWrapper.length()}) ${stored.toString()}:\n${this.interprete(stored)}\n")
-                        }
-                    }
-
-                    reservedTokens[j].call() 
+                    println("Ln ${expr.length}")
+                    reservedTokens[j].checkAndCall() 
                 }
                 catch(err: Throwable){
                     println(err.message)

@@ -66,6 +66,7 @@ public class LinkedList <Generic> {
         return false;
     }
 
+
     override fun toString(): String {
         var str: String = ""
         var e: Node<Generic>? = root
